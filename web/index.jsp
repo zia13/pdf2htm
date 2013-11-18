@@ -13,7 +13,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
     </head>
-    <body style=" background-color: lightpink">
+    <body style=" background-color: darkkhaki">
         <div align ="center" style=" margin-top: 200px">
             <form action="HomePage" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="documentURL" value="/5/1/8/2/7/146/"/>

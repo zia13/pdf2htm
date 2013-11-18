@@ -10,6 +10,10 @@
 import java.util.List;   
 import javax.xml.bind.annotation.*;
 
+/**
+ *
+ * @author Zia
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Page implements Comparable<Page> {
 
@@ -43,5 +47,4 @@ public class Page implements Comparable<Page> {
         Integer i = pageNumber;
         return i.compareTo(o.pageNumber);
     }
-
 }

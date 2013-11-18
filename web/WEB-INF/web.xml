@@ -32,10 +32,25 @@
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
+    	<env-entry>
+    	<env-entry-name>picturePublishDirectory</env-entry-name>
+    	<env-entry-type>java.lang.String</env-entry-type>
+    	<env-entry-value>C:\\blazeds\\tomcat\\webapps\\pictures\\</env-entry-value>
+    </env-entry>
+    <env-entry>
+    	<env-entry-name>picturePublishURI</env-entry-name>
+    	<env-entry-type>java.lang.String</env-entry-type>
+    	<env-entry-value>http://dev2-64.xpressfiler.com/pictures/</env-entry-value>
+    </env-entry>
     <env-entry>
         <env-entry-name>pdfSavingDirectory</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>C:\\blazeds\\tomcat\\webapps\\ROOT\\resources\\pdf</env-entry-value>
+        <env-entry-value>C:\\blazeds\\tomcat\\webapps\\ROOT\\resources\\pdf\\</env-entry-value>
+    </env-entry>
+    <env-entry>
+        <env-entry-name>blankpdfDirectory</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>D:\\BlankPdfForPdf2HTML\\blankpdf.pdf</env-entry-value>
     </env-entry>
     <env-entry>
         <env-entry-name>swfToolInstallationDirectory</env-entry-name>

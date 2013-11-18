@@ -24,14 +24,17 @@ import pdfreader.RegionSetter;
  */
 public class ParseXML {
     Document doc;
+    /**
+     *
+     */
     public ParseXML() 
     {        
         try{
             Context env = (Context) new InitialContext().lookup("java:comp/env");
             String directory = (String) env.lookup("pdfSavingDirectory"); //Set the Project ID and File ID here
-            String pdfDirectory = directory.concat("\\form10q.pdf");
-            String xmlDirectory = directory.concat("\\form10q.xml");
-            String htmlDirectory = directory.concat("\\form10q.htm");
+            String pdfDirectory = directory.concat("form10q.pdf");
+            String xmlDirectory = directory.concat("form10q.xml");
+            String htmlDirectory = directory.concat("form10q.htm");
             System.out.println("XML Parsing Start.....");
             File stocks = new File(xmlDirectory);
             InputStream inputStream = new FileInputStream(stocks);
@@ -84,6 +87,10 @@ public class ParseXML {
     }
 
     
+    /**
+     *
+     * @param tag
+     */
     public void getByTagName(String tag)
     {
 //        NodeList nodes = doc.getElementsByTagName(tag);
@@ -128,6 +135,10 @@ public class ParseXML {
     
     
     
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args)
     {
         ParseXML pxml = new ParseXML();

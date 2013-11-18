@@ -21,6 +21,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.w3c.dom.Document;
 import pdfreader.HtmlFileGen;
 
@@ -44,11 +45,13 @@ public class ReadXML extends HttpServlet {
         
         response.setContentType("text/xml;charset=UTF-8");
         PrintWriter out = response.getWriter();
+        //Pages initialConfig = new Pages();
         try {
             try{
                 Context env = (Context) new InitialContext().lookup("java:comp/env");
-                String directory = (String) env.lookup("pdfSavingDirectory"); //Set the Project ID and File ID here
-                
+                String directory = (String) env.lookup("pdfSavingDirectory"); 
+                String imgSavingDirectory = (String) env.lookup("picturePublishDirectory"); 
+                String imgSavingURL = (String) env.lookup("picturePublishURI");
                 Pages pages;
                 
                 String fileId = (String) request.getParameter("fileId");
@@ -59,9 +62,12 @@ public class ReadXML extends HttpServlet {
                 Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
                 inputStream = new ByteArrayInputStream(xmlContent.getBytes("UTF-8"));
                 pages = (Pages) jaxbUnmarshaller.unmarshal(inputStream);
+                //initialConfig = (Pages) jaxbUnmarshaller.unmarshal(inputStream);
 
-                String pdfDirectory = directory.concat("\\\\p"+projectId+"_f"+fileId+".pdf");                
-                HtmlFileGen htmlFileGen = new HtmlFileGen(pdfDirectory);
+                System.out.println("Getting xml: "+ getXMLString(pages));
+                
+                String pdfDirectory = directory.concat("p"+projectId+"_f"+fileId+".pdf");                
+                HtmlFileGen htmlFileGen = new HtmlFileGen(pdfDirectory,imgSavingDirectory,imgSavingURL,projectId,fileId);
                 Collections.sort(pages.getPages());
                 List<Page> pageList = pages.getPages();
                 for(int i =0;i<pageList.size();i++)
@@ -77,24 +83,42 @@ public class ReadXML extends HttpServlet {
                         {
                             Region r = p.getRegions().get(j);
                             if(r.getHtmlContent() == null)
-                            {                                
+                            {
                                 rec = new Rectangle(r.getX(),r.getY(),r.getWidth(),r.getHeight());
-                                r.setHtmlContent(htmlFileGen.getHtmlContent(pageNumber, rec, r.getType()).toString());
+                                String s = null;
+                                try{
+                                    s = htmlFileGen.getHtmlContent(pageNumber, rec, r.getType());
+                                    s = StringEscapeUtils.escapeXml(s);
+                                }       
+                                catch(Exception ex){
+                                    System.out.println("Exception occured in: ReadXML->processRequest:"+ ex.getMessage());
+                                }
+                                
+//                                out.write(s+"\n");
+//                                byte[] bytesInUTF8 = s.getBytes("UTF-8");
+//                                r.setHtmlContent(new String(bytesInUTF8, "UTF-8"));
+                                r.setHtmlContent(s);
                             }
                         }
                     }
                 }
-                out.println(getXMLString(pages));
+                System.out.println("Returning xml: "+ getXMLString(pages));
+                out.write(getXMLString(pages));                
             }
             catch(Exception ex){
-                out.println("</br>"+ex.getMessage());
+                out.println();
             }
         } finally {            
             out.close();
         }
     }
     
-     public String getXMLString(Pages pages) {
+     /**
+     *
+     * @param pages
+     * @return
+     */
+    public String getXMLString(Pages pages) {
 
         try {
             JAXBContext ctx = JAXBContext.newInstance(Pages.class);

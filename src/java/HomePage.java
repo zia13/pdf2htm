@@ -12,6 +12,7 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import pdfreader.Merge;
 
 //import org.apache.poi.xwpf.usermodel.XWPFDocument;
 //import edgarhtmlcomponents.EDGARHTMLComponentCreationException;
@@ -31,6 +32,10 @@ public class HomePage extends HttpServlet {
     }
 
     /**
+     * @param request 
+     * @param response 
+     * @throws ServletException 
+     * @throws IOException 
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      * response)
      */
@@ -41,6 +46,10 @@ public class HomePage extends HttpServlet {
     }
 
     /**
+     * @param request 
+     * @param response 
+     * @throws ServletException 
+     * @throws IOException 
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
      * response)
      */
@@ -59,11 +68,13 @@ public class HomePage extends HttpServlet {
         PrintWriter out = response.getWriter();
         InputStream uploadedFileStream;
         String pdfSavingDirectory = "";
+        String blankPdfDirectory = "";
         String swfToolsDirectory = "";  
         try
         {
             Context env = (Context) new InitialContext().lookup("java:comp/env");
             pdfSavingDirectory = (String) env.lookup("pdfSavingDirectory");
+            blankPdfDirectory = (String) env.lookup("blankpdfDirectory");
             swfToolsDirectory = (String) env.lookup("swfToolInstallationDirectory");
         }
         catch(Exception ex)
@@ -101,9 +112,16 @@ public class HomePage extends HttpServlet {
                         }
                         try 
                         {
-                            String fileUrl = pdfSavingDirectory.concat("\\\\p").concat(projectId).concat("_f").concat(fileId);
+                            String fileUrl = pdfSavingDirectory.concat("p").concat(projectId).concat("_f").concat(fileId);
                             pdfFile = new File(fileUrl +".pdf");
-                            item.write(pdfFile);
+                            item.write(pdfFile);                            
+                            Merge m = new Merge();
+                            try{
+                                m.merge2PDF(pdfFile.getAbsolutePath(), blankPdfDirectory);
+                            }
+                            catch(Exception ex){
+                                System.out.println("Blank Pdf file in D:/BlankPdfForPdf2HTML/blankpdf.pdf is not exist or PDF is not exist."+ex.getMessage());
+                            }
                             try 
                             {
                                 Runtime rt = Runtime.getRuntime();                                
@@ -137,7 +155,7 @@ public class HomePage extends HttpServlet {
                         }
                         catch (Exception e) 
                         {
-                            out.println(e.getMessage());
+                            System.out.println(e.getMessage());
                         } 
                         out.close();
                     }

@@ -12,6 +12,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+/**
+ *
+ * @author Zia
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Region implements Comparable<Region> {
 
