@@ -41,6 +41,7 @@ public class ReadXML extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
         
         response.setContentType("text/xml;charset=UTF-8");
@@ -57,6 +58,12 @@ public class ReadXML extends HttpServlet {
                 String fileId = (String) request.getParameter("fileId");
                 String projectId = (String)request.getParameter("projectId");
                 String xmlContent = (String)request.getParameter("xmlContent");
+                
+                File file = new File("D:/xml before parse.xml");
+                BufferedWriter output = new BufferedWriter(new FileWriter(file));
+                output.write(xmlContent);
+                output.close();
+                
                 InputStream inputStream;
                 JAXBContext jaxbContext = JAXBContext.newInstance(Pages.class);
                 Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -64,7 +71,11 @@ public class ReadXML extends HttpServlet {
                 pages = (Pages) jaxbUnmarshaller.unmarshal(inputStream);
                 //initialConfig = (Pages) jaxbUnmarshaller.unmarshal(inputStream);
 
-                System.out.println("Getting xml: "+ getXMLString(pages));
+//                System.out.println("Getting xml: "+ getXMLString(pages));
+//                File file = new File("D:/xml before parse.xml");
+//                BufferedWriter output = new BufferedWriter(new FileWriter(file));
+//                output.write(xmlContent);
+//                output.close();
                 
                 String pdfDirectory = directory.concat("p"+projectId+"_f"+fileId+".pdf");                
                 HtmlFileGen htmlFileGen = new HtmlFileGen(pdfDirectory,imgSavingDirectory,imgSavingURL,projectId,fileId);
@@ -73,21 +84,29 @@ public class ReadXML extends HttpServlet {
                 for(int i =0;i<pageList.size();i++)
                 {
                     Page p = pageList.get(i);
-                    int pageNumber = p.getPageNumber()-1;                    
+                    int pageNumber = p.getPageNumber()-1;  
+//                    System.out.println("Page Number :"+pageNumber);
                     if(p.getRegions()!=null)
                     {
                         int noOfRegionsInPagei = p.getRegions().size();
                         Rectangle rec;                        
-                        Collections.sort(p.getRegions());                        
+                        Collections.sort(p.getRegions());    
+//                        System.out.println("Rec :");                     
                         for(int j =0; j< noOfRegionsInPagei;j++)
-                        {
+                        { 
+//                            System.out.println("Region Number");
                             Region r = p.getRegions().get(j);
-                            if(r.getHtmlContent() == null)
+                            
+                            if(r.getHtmlContent()==null || r.getHtmlContent().equals(""))
                             {
+//                                System.out.println("HTML Content Null!!!!!!!!");
                                 rec = new Rectangle(r.getX(),r.getY(),r.getWidth(),r.getHeight());
                                 String s = null;
                                 try{
+                                     
+//                                    System.out.println("Try");
                                     s = htmlFileGen.getHtmlContent(pageNumber, rec, r.getType());
+//                                    System.out.println("Fail");
                                     s = StringEscapeUtils.escapeXml(s);
                                 }       
                                 catch(Exception ex){
@@ -102,7 +121,8 @@ public class ReadXML extends HttpServlet {
                         }
                     }
                 }
-                System.out.println("Returning xml: "+ getXMLString(pages));
+                
+//                System.out.println("Returning xml: "+ getXMLString(pages));
                 out.write(getXMLString(pages));                
             }
             catch(Exception ex){
@@ -118,6 +138,7 @@ public class ReadXML extends HttpServlet {
      * @param pages
      * @return
      */
+    
     public String getXMLString(Pages pages) {
 
         try {
@@ -141,6 +162,15 @@ public class ReadXML extends HttpServlet {
             t.transform(xmlSource, result);
             StringBuffer sb = outWriter.getBuffer();
             String finalstring = sb.toString();
+            
+            // Create a xml file in D: drive
+            
+            File file1 = new File("D:/xml after parse.xml");
+            BufferedWriter output1 = new BufferedWriter(new FileWriter(file1));
+            output1.write(StringEscapeUtils.unescapeXml(finalstring));
+            output1.close();
+            
+            //end of XML file creation
             return finalstring;
 
         } catch (Exception e) {
