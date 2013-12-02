@@ -69,8 +69,8 @@ public class ReadXML extends HttpServlet {
                 Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
                 inputStream = new ByteArrayInputStream(xmlContent.getBytes("UTF-8"));
                 pages = (Pages) jaxbUnmarshaller.unmarshal(inputStream);
-                //initialConfig = (Pages) jaxbUnmarshaller.unmarshal(inputStream);
 
+                //                initialConfig = (Pages) jaxbUnmarshaller.unmarshal(inputStream);
 //                System.out.println("Getting xml: "+ getXMLString(pages));
 //                File file = new File("D:/xml before parse.xml");
 //                BufferedWriter output = new BufferedWriter(new FileWriter(file));
