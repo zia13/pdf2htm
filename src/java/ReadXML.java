@@ -14,15 +14,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 import pdfreader.HtmlFileGen;
 
 /**
@@ -112,7 +115,6 @@ public class ReadXML extends HttpServlet {
                                 catch(Exception ex){
                                     System.out.println("Exception occured in: ReadXML->processRequest:"+ ex.getMessage());
                                 }
-                                
 //                                out.write(s+"\n");
 //                                byte[] bytesInUTF8 = s.getBytes("UTF-8");
 //                                r.setHtmlContent(new String(bytesInUTF8, "UTF-8"));
@@ -173,7 +175,7 @@ public class ReadXML extends HttpServlet {
             //end of XML file creation
             return finalstring;
 
-        } catch (Exception e) {
+        } catch (JAXBException | ParserConfigurationException | SAXException | IOException | TransformerFactoryConfigurationError | IllegalArgumentException | TransformerException e) {
             System.out.println(e.getMessage());
         }
         return "";
@@ -189,6 +191,7 @@ public class ReadXML extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
