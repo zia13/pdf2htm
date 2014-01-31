@@ -4,11 +4,7 @@ To change this template, choose Tools | Templates
 and open the template in the editor.
 -->
 <Pages>
-    <page no="1"/>
-    <page no="2"/>
-    <page no="3"/>
-    <page no="4"/>
-    
+        
     <Page no="1">        
         <Region x ="" y ="" width = "" height = "" type = "" >
             <htmlContent></htmlContent>                
