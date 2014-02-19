@@ -14,7 +14,6 @@ import javax.xml.bind.annotation.*;
 @XmlRootElement(name="Pages")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Pages {    
-
     
     @XmlElement(name="Page")
     private List<Page> pages; 

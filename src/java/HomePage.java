@@ -166,7 +166,5 @@ public class HomePage extends HttpServlet {
         {
             out.println(e.getMessage());
         }
-
     }
-
 }

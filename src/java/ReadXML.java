@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 
+import htmltemplating.HTMLTemplateProcessor;
 import java.awt.Rectangle;
 import java.io.*;
 import java.util.Collections;
@@ -34,86 +35,99 @@ import pdfreader.HtmlFileGen;
  */
 public class ReadXML extends HttpServlet {
 
+    private String xmlStyleTemplateContent = "<paragraph_style>"
+            + "<paragraph text-align=\"left\" margin=\"0px 0px 0px 0px\">"
+            + "<first_line indent=\"5px\"/>"
+            + "<hanging indent=\"6px\"/>"
+            + "<font color=\"#000000\" size=\"12px\" family=\"Times New Roman\">"
+            + "<b>false</b>"
+            + "<i>false</i>"
+            + "<u>false</u>"
+            + "</font>"
+            + "</paragraph>"
+            + "</paragraph_style>";
+    private String styleTemplateID = "1";
+    private boolean useNewTemplateProcessor = true;
+
     /**
-     * Processes requests for both HTTP
-     * <code>GET</code> and
-     * <code>POST</code> methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
      *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
-        
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         response.setContentType("text/xml;charset=UTF-8");
         PrintWriter out = response.getWriter();
         //Pages initialConfig = new Pages();
         try {
-            try{
+            try {
                 Context env = (Context) new InitialContext().lookup("java:comp/env");
-                String directory = (String) env.lookup("pdfSavingDirectory"); 
-                String imgSavingDirectory = (String) env.lookup("picturePublishDirectory"); 
+                String directory = (String) env.lookup("pdfSavingDirectory");
+                String imgSavingDirectory = (String) env.lookup("picturePublishDirectory");
                 String imgSavingURL = (String) env.lookup("picturePublishURI");
                 Pages pages;
-                
+
                 String fileId = (String) request.getParameter("fileId");
-                String projectId = (String)request.getParameter("projectId");
-                String xmlContent = (String)request.getParameter("xmlContent");
-                
+                String projectId = (String) request.getParameter("projectId");
+                String xmlContent = (String) request.getParameter("xmlContent");
+
                 File file = new File("D:/xml before parse.xml");
                 BufferedWriter output = new BufferedWriter(new FileWriter(file));
                 output.write(xmlContent);
                 output.close();
-                
+
                 InputStream inputStream;
                 JAXBContext jaxbContext = JAXBContext.newInstance(Pages.class);
                 Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
                 inputStream = new ByteArrayInputStream(xmlContent.getBytes("UTF-8"));
                 pages = (Pages) jaxbUnmarshaller.unmarshal(inputStream);
 
-                //                initialConfig = (Pages) jaxbUnmarshaller.unmarshal(inputStream);
+//                initialConfig = (Pages) jaxbUnmarshaller.unmarshal(inputStream);
 //                System.out.println("Getting xml: "+ getXMLString(pages));
 //                File file = new File("D:/xml before parse.xml");
 //                BufferedWriter output = new BufferedWriter(new FileWriter(file));
 //                output.write(xmlContent);
 //                output.close();
-                
-                String pdfDirectory = directory.concat("p"+projectId+"_f"+fileId+".pdf");                
-                HtmlFileGen htmlFileGen = new HtmlFileGen(pdfDirectory,imgSavingDirectory,imgSavingURL,projectId,fileId);
+                String pdfDirectory = directory.concat("p" + projectId + "_f" + fileId + ".pdf");
+                HtmlFileGen htmlFileGen = new HtmlFileGen(pdfDirectory, imgSavingDirectory, imgSavingURL, projectId, fileId);
                 Collections.sort(pages.getPages());
                 List<Page> pageList = pages.getPages();
-                for(int i =0;i<pageList.size();i++)
-                {
+                for (int i = 0; i < pageList.size(); i++) {
                     Page p = pageList.get(i);
-                    int pageNumber = p.getPageNumber()-1;  
+                    int pageNumber = p.getPageNumber() - 1;
 //                    System.out.println("Page Number :"+pageNumber);
-                    if(p.getRegions()!=null)
-                    {
+                    if (p.getRegions() != null) {
                         int noOfRegionsInPagei = p.getRegions().size();
-                        Rectangle rec;                        
-                        Collections.sort(p.getRegions());    
+                        Rectangle rec;
+                        Collections.sort(p.getRegions());
 //                        System.out.println("Rec :");                     
-                        for(int j =0; j< noOfRegionsInPagei;j++)
-                        { 
+                        for (int j = 0; j < noOfRegionsInPagei; j++) {
 //                            System.out.println("Region Number");
                             Region r = p.getRegions().get(j);
-                            
-                            if(r.getHtmlContent()==null || r.getHtmlContent().equals(""))
-                            {
+
+                            if (r.getHtmlContent() == null || r.getHtmlContent().equals("")) {
 //                                System.out.println("HTML Content Null!!!!!!!!");
-                                rec = new Rectangle(r.getX(),r.getY(),r.getWidth(),r.getHeight());
+                                rec = new Rectangle(r.getX(), r.getY(), r.getWidth(), r.getHeight());
                                 String s = null;
-                                try{
-                                     
+                                try {
+
 //                                    System.out.println("Try");
                                     s = htmlFileGen.getHtmlContent(pageNumber, rec, r.getType());
 //                                    System.out.println("Fail");
                                     s = StringEscapeUtils.escapeXml(s);
-                                }       
+                                } catch (Exception ex) {
+                                    System.out.println("Exception occured in: ReadXML->processRequest:" + ex.getMessage());
+                                }
+                                try{
+                                    String tempNewContent = applyTemplate(s);
+                                    s = tempNewContent;
+                                }
                                 catch(Exception ex){
-                                    System.out.println("Exception occured in: ReadXML->processRequest:"+ ex.getMessage());
+                                    System.out.println(ex.getMessage());
                                 }
 //                                out.write(s+"\n");
 //                                byte[] bytesInUTF8 = s.getBytes("UTF-8");
@@ -123,24 +137,25 @@ public class ReadXML extends HttpServlet {
                         }
                     }
                 }
-                
+//                if(true)
+//                {
+//                    HTMLTemplateProcessor htmlAfterTemplating = new HTMLTemplateProcessor(inputStream, inputStream, xmlContent);
+//                }
 //                System.out.println("Returning xml: "+ getXMLString(pages));
-                out.write(getXMLString(pages));                
-            }
-            catch(Exception ex){
+                out.write(getXMLString(pages));
+            } catch (Exception ex) {
                 out.println();
             }
-        } finally {            
+        } finally {
             out.close();
         }
     }
-    
-     /**
+
+    /**
      *
      * @param pages
      * @return
      */
-    
     public String getXMLString(Pages pages) {
 
         try {
@@ -164,14 +179,13 @@ public class ReadXML extends HttpServlet {
             t.transform(xmlSource, result);
             StringBuffer sb = outWriter.getBuffer();
             String finalstring = sb.toString();
-            
+
             // Create a xml file in D: drive
-            
             File file1 = new File("D:/xml after parse.xml");
             BufferedWriter output1 = new BufferedWriter(new FileWriter(file1));
             output1.write(StringEscapeUtils.unescapeXml(finalstring));
             output1.close();
-            
+
             //end of XML file creation
             return finalstring;
 
@@ -183,15 +197,13 @@ public class ReadXML extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
-     * Handles the HTTP
-     * <code>GET</code> method.
+     * Handles the HTTP <code>GET</code> method.
      *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -199,8 +211,7 @@ public class ReadXML extends HttpServlet {
     }
 
     /**
-     * Handles the HTTP
-     * <code>POST</code> method.
+     * Handles the HTTP <code>POST</code> method.
      *
      * @param request servlet request
      * @param response servlet response
@@ -224,11 +235,30 @@ public class ReadXML extends HttpServlet {
     }// </editor-fold>
 
     private Region getSortedRegions(List<Region> regionsBeforeSort, int yPos) {
-        for(int j =0; j< regionsBeforeSort.size();j++)
-        {
-            if(regionsBeforeSort.get(j).getY() == yPos)
+        for (int j = 0; j < regionsBeforeSort.size(); j++) {
+            if (regionsBeforeSort.get(j).getY() == yPos) {
                 return regionsBeforeSort.get(j);
+            }
         }
         return null;
+    }
+
+    private String applyTemplate(String content) throws IOException {
+        String newContent = null;
+        try {
+            InputStream is = new ByteArrayInputStream(content.getBytes("UTF-8"));
+            InputStream xmlUploadedFileStream = new ByteArrayInputStream(xmlStyleTemplateContent.getBytes("UTF-8"));
+            if (useNewTemplateProcessor) {
+                HTMLTemplateProcessor hTMLTemplateProcessor = new HTMLTemplateProcessor(is,
+                        xmlUploadedFileStream, styleTemplateID);
+                newContent = hTMLTemplateProcessor.processedHTML();
+                xmlUploadedFileStream.close();
+                is.close();
+            } else {
+                newContent = content;
+            }
+        } catch (UnsupportedEncodingException e) {
+        }
+        return newContent;
     }
 }

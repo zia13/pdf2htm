@@ -40,7 +40,7 @@
     <env-entry>
     	<env-entry-name>picturePublishURI</env-entry-name>
     	<env-entry-type>java.lang.String</env-entry-type>
-    	<env-entry-value>http://dev2-64.xpressfiler.com/pictures/</env-entry-value>
+    	<env-entry-value>localhost/pictures/</env-entry-value>
     </env-entry>
     <env-entry>
         <env-entry-name>pdfSavingDirectory</env-entry-name>
@@ -55,6 +55,7 @@
     <env-entry>
         <env-entry-name>swfToolInstallationDirectory</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>C:\\Program Files\\swftools\</env-entry-value>
+        <!--<env-entry-value>C:\\Program Files\\swftools\</env-entry-value> -->
+        <env-entry-value>F:\\Installed Application\\swftools\</env-entry-value>
     </env-entry>
 </web-app>
