@@ -35,8 +35,8 @@ import pdfreader.HtmlFileGen;
  */
 public class ReadXML extends HttpServlet {
 
-    private String xmlStyleTemplateContent = "<paragraph_style>"
-            + "<paragraph text-align=\"left\" margin=\"0px 0px 0px 0px\">"
+    private final String pStyle = "<paragraph_style>"
+            + "<paragraph text-align=\"left\" margin=\"5px 5px 5px 5px\">"
             + "<first_line indent=\"5px\"/>"
             + "<hanging indent=\"6px\"/>"
             + "<font color=\"#000000\" size=\"12px\" family=\"Times New Roman\">"
@@ -46,8 +46,107 @@ public class ReadXML extends HttpServlet {
             + "</font>"
             + "</paragraph>"
             + "</paragraph_style>";
-    private String styleTemplateID = "1";
-    private boolean useNewTemplateProcessor = true;
+
+    private final String iStyle = "<image_style>"
+            + "  <img align=\"center\" margin=\"3px 3px 3px 3px\" border=\"2px solid #ff0000\"/>"
+            + "</image_style>";
+
+    private final String tableStyle = "<financial_table_style>"
+            + "  <global_styles>"
+            + "    <currency_column width=\"2\" align=\"Right\">true</currency_column>"
+            + "    <gutter_column width=\"2\" align=\"Left\">true</gutter_column>"
+            + "    <remove_empty_column>true</remove_empty_column>"
+            + "    <remove_empty_row>true</remove_empty_row>"
+            + "    <stub_column minWidth=\"40\"/>"
+            + "    <value_columns apply=\"true\">"
+            + "      <width_rule name=\"min_rule\">"
+            + "        <min_columns>-1</min_columns>"
+            + "        <max_columns>10</max_columns>"
+            + "        <width>10</width>"
+            + "      </width_rule>"
+            + "      <width_rule name=\"max_rule\">"
+            + "        <min_columns>5</min_columns>"
+            + "        <max_columns>-1</max_columns>"
+            + "        <width>8</width>"
+            + "      </width_rule>"
+            + "    </value_columns>"
+            + "  </global_styles>"
+            + "  <table>"
+            + "    <applyRule/>"
+            + "    <even_rows>"
+            + "      <even_cells align=\"left\" bgcolor=\"#ffffff\">"
+            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+            + "          <b>false</b>"
+            + "          <i>false</i>"
+            + "          <u>false</u>"
+            + "        </font>"
+            + "      </even_cells>"
+            + "      <odd_cells align=\"left\" bgcolor=\"#ffffff\">"
+            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+            + "          <b>false</b>"
+            + "          <i>false</i>"
+            + "          <u>false</u>"
+            + "        </font>"
+            + "      </odd_cells>"
+            + "      <stub_cell align=\"left\" bgcolor=\"#ffffff\">"
+            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+            + "          <b>false</b>"
+            + "          <i>false</i>"
+            + "          <u>false</u>"
+            + "        </font>"
+            + "      </stub_cell>"
+            + "    </even_rows>"
+            + "    <header_row>"
+            + "      <even_cells align=\"left\" bgcolor=\"#ffffff\">"
+            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+            + "          <b>false</b>"
+            + "          <i>false</i>"
+            + "          <u>false</u>"
+            + "        </font>"
+            + "      </even_cells>"
+            + "      <odd_cells align=\"left\" bgcolor=\"#ffffff\">"
+            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+            + "          <b>false</b>"
+            + "          <i>false</i>"
+            + "          <u>false</u>"
+            + "        </font>"
+            + "      </odd_cells>"
+            + "      <stub_cell align=\"left\" bgcolor=\"#ffffff\">"
+            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+            + "          <b>false</b>"
+            + "          <i>false</i>"
+            + "          <u>false</u>"
+            + "        </font>"
+            + "      </stub_cell>"
+            + "    </header_row>"
+            + "    <odd_rows>"
+            + "      <even_cells align=\"left\" bgcolor=\"#cc3300\">"
+            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+            + "          <b>false</b>"
+            + "          <i>false</i>"
+            + "          <u>false</u>"
+            + "        </font>"
+            + "      </even_cells>"
+            + "      <odd_cells align=\"left\" bgcolor=\"#cc3300\">"
+            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+            + "          <b>false</b>"
+            + "          <i>false</i>"
+            + "          <u>false</u>"
+            + "        </font>"
+            + "      </odd_cells>"
+            + "      <stub_cell align=\"left\" bgcolor=\"#cc3300\">"
+            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+            + "          <b>false</b>"
+            + "          <i>false</i>"
+            + "          <u>false</u>"
+            + "        </font>"
+            + "      </stub_cell>"
+            + "    </odd_rows>"
+            + "  </table>"
+            + "</financial_table_style>";
+
+    private String xmlStyleTemplateContent = null;
+    private final String styleTemplateID = "1";   
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -74,6 +173,8 @@ public class ReadXML extends HttpServlet {
                 String fileId = (String) request.getParameter("fileId");
                 String projectId = (String) request.getParameter("projectId");
                 String xmlContent = (String) request.getParameter("xmlContent");
+                boolean useNewTemplateProcessor = true;
+//                useNewTemplateProcessor = (String) request.getParameter("isNewsFile")!=null;
 
                 File file = new File("D:/xml before parse.xml");
                 BufferedWriter output = new BufferedWriter(new FileWriter(file));
@@ -117,18 +218,24 @@ public class ReadXML extends HttpServlet {
 
 //                                    System.out.println("Try");
                                     s = htmlFileGen.getHtmlContent(pageNumber, rec, r.getType());
+                                    if (useNewTemplateProcessor) {
+                                        System.out.println(r.getType()+" before template: "+s);
+                                        s = replacePTagByDiv(s);                                        
+                                        try {
+                                            String tempNewContent = applyTemplate(s, r.getType());
+                                            s = tempNewContent;
+                                        System.out.println(r.getType()+" after template: "+s);
+
+                                        } catch (Exception ex) {
+                                            System.out.println(ex.getMessage());
+                                        }
+                                    }
 //                                    System.out.println("Fail");
                                     s = StringEscapeUtils.escapeXml(s);
                                 } catch (Exception ex) {
                                     System.out.println("Exception occured in: ReadXML->processRequest:" + ex.getMessage());
                                 }
-                                try{
-                                    String tempNewContent = applyTemplate(s);
-                                    s = tempNewContent;
-                                }
-                                catch(Exception ex){
-                                    System.out.println(ex.getMessage());
-                                }
+
 //                                out.write(s+"\n");
 //                                byte[] bytesInUTF8 = s.getBytes("UTF-8");
 //                                r.setHtmlContent(new String(bytesInUTF8, "UTF-8"));
@@ -243,22 +350,38 @@ public class ReadXML extends HttpServlet {
         return null;
     }
 
-    private String applyTemplate(String content) throws IOException {
+    private String applyTemplate(String content, String type) throws IOException {
         String newContent = null;
+        switch (type) {
+            case "table":
+                xmlStyleTemplateContent = tableStyle;
+                break;
+            case "paragraph":
+            case "text_with_line_break":
+                xmlStyleTemplateContent = pStyle;
+                break;
+            case "image":
+                xmlStyleTemplateContent = iStyle;
+                break;
+        }
+//        xmlStyleTemplateContent = "<all>".concat(pStyle).concat(iStyle).concat(tableStyle).concat("</all>");
         try {
             InputStream is = new ByteArrayInputStream(content.getBytes("UTF-8"));
             InputStream xmlUploadedFileStream = new ByteArrayInputStream(xmlStyleTemplateContent.getBytes("UTF-8"));
-            if (useNewTemplateProcessor) {
-                HTMLTemplateProcessor hTMLTemplateProcessor = new HTMLTemplateProcessor(is,
-                        xmlUploadedFileStream, styleTemplateID);
-                newContent = hTMLTemplateProcessor.processedHTML();
-                xmlUploadedFileStream.close();
-                is.close();
-            } else {
-                newContent = content;
-            }
+            HTMLTemplateProcessor hTMLTemplateProcessor = new HTMLTemplateProcessor(is,
+                    xmlUploadedFileStream, styleTemplateID);
+            newContent = hTMLTemplateProcessor.processedHTML();
+            xmlUploadedFileStream.close();
+            is.close();
+            
         } catch (UnsupportedEncodingException e) {
         }
         return newContent;
     }
+
+    private String replacePTagByDiv(String content){
+        String newCont = content.replace("<p", "<div").replace("</p>", "</div>");
+        return newCont;        
+    }
+
 }
