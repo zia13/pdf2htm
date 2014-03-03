@@ -36,7 +36,7 @@ import pdfreader.HtmlFileGen;
 public class ReadXML extends HttpServlet {
 
     private final String pStyle = "<paragraph_style>"
-            + "<paragraph text-align=\"left\" margin=\"5px 5px 5px 5px\">"
+            + "<paragraph text-align=\"justify\" margin=\"5px 5px 5px 5px\">"
             + "<first_line indent=\"5px\"/>"
             + "<hanging indent=\"6px\"/>"
             + "<font color=\"#000000\" size=\"12px\" family=\"Times New Roman\">"
