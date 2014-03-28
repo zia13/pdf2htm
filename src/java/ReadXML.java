@@ -478,6 +478,7 @@ public class ReadXML extends HttpServlet {
                 break;
             case "image":
                 xmlStyleTemplateContent = imageStyle;
+                content = replacePTagByDiv(content);
                 break;
         }
 //        xmlStyleTemplateContent = "<all>".concat(pStyle).concat(iStyle).concat(tableStyle).concat("</all>");
