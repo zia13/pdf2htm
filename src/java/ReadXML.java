@@ -35,118 +35,133 @@ import pdfreader.HtmlFileGen;
  */
 public class ReadXML extends HttpServlet {
 
-    private final String pStyle = "<paragraph_style>"
-            + "<paragraph text-align=\"justify\" margin=\"5px 5px 5px 5px\">"
-            + "<first_line indent=\"5px\"/>"
-            + "<hanging indent=\"6px\"/>"
-            + "<font color=\"#000000\" size=\"12px\" family=\"Times New Roman\">"
-            + "<b>false</b>"
-            + "<i>false</i>"
-            + "<u>false</u>"
-            + "</font>"
-            + "</paragraph>"
-            + "</paragraph_style>";
+    private String paragraphStyle = null;
+//            = "<paragraph_style>"
+//            + "<paragraph text-align=\"justify\" margin=\"5px 5px 5px 5px\">"
+//            + "<first_line indent=\"5px\"/>"
+//            + "<hanging indent=\"6px\"/>"
+//            + "<font color=\"#000000\" size=\"10pt\" family=\"Times New Roman\">"
+//            + "<b>false</b>"
+//            + "<i>false</i>"
+//            + "<u>false</u>"
+//            + "</font>"
+//            + "</paragraph>"
+//            + "</paragraph_style>";
 
-    private final String iStyle = "<image_style>"
-            + "  <img align=\"center\" margin=\"3px 3px 3px 3px\" border=\"2px solid #ff0000\"/>"
-            + "</image_style>";
+    private String imageStyle = null;
+//            = "<image_style>"
+//            + "  <img align=\"center\" margin=\"3px 3px 3px 3px\" border=\"2px solid #ff0000\"/>"
+//            + "</image_style>";
 
-    private final String tableStyle = "<financial_table_style>"
-            + "  <global_styles>"
-            + "    <currency_column width=\"2\" align=\"Right\">true</currency_column>"
-            + "    <gutter_column width=\"2\" align=\"Left\">true</gutter_column>"
-            + "    <remove_empty_column>true</remove_empty_column>"
-            + "    <remove_empty_row>true</remove_empty_row>"
-            + "    <stub_column minWidth=\"40\"/>"
-            + "    <value_columns apply=\"true\">"
-            + "      <width_rule name=\"min_rule\">"
-            + "        <min_columns>-1</min_columns>"
-            + "        <max_columns>10</max_columns>"
-            + "        <width>10</width>"
-            + "      </width_rule>"
-            + "      <width_rule name=\"max_rule\">"
-            + "        <min_columns>5</min_columns>"
-            + "        <max_columns>-1</max_columns>"
-            + "        <width>8</width>"
-            + "      </width_rule>"
-            + "    </value_columns>"
-            + "  </global_styles>"
-            + "  <table>"
-            + "    <applyRule/>"
-            + "    <even_rows>"
-            + "      <even_cells align=\"left\" bgcolor=\"#ffffff\">"
-            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
-            + "          <b>false</b>"
-            + "          <i>false</i>"
-            + "          <u>false</u>"
-            + "        </font>"
-            + "      </even_cells>"
-            + "      <odd_cells align=\"left\" bgcolor=\"#ffffff\">"
-            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
-            + "          <b>false</b>"
-            + "          <i>false</i>"
-            + "          <u>false</u>"
-            + "        </font>"
-            + "      </odd_cells>"
-            + "      <stub_cell align=\"left\" bgcolor=\"#ffffff\">"
-            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
-            + "          <b>false</b>"
-            + "          <i>false</i>"
-            + "          <u>false</u>"
-            + "        </font>"
-            + "      </stub_cell>"
-            + "    </even_rows>"
-            + "    <header_row>"
-            + "      <even_cells align=\"left\" bgcolor=\"#ffffff\">"
-            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
-            + "          <b>false</b>"
-            + "          <i>false</i>"
-            + "          <u>false</u>"
-            + "        </font>"
-            + "      </even_cells>"
-            + "      <odd_cells align=\"left\" bgcolor=\"#ffffff\">"
-            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
-            + "          <b>false</b>"
-            + "          <i>false</i>"
-            + "          <u>false</u>"
-            + "        </font>"
-            + "      </odd_cells>"
-            + "      <stub_cell align=\"left\" bgcolor=\"#ffffff\">"
-            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
-            + "          <b>false</b>"
-            + "          <i>false</i>"
-            + "          <u>false</u>"
-            + "        </font>"
-            + "      </stub_cell>"
-            + "    </header_row>"
-            + "    <odd_rows>"
-            + "      <even_cells align=\"left\" bgcolor=\"#cc3300\">"
-            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
-            + "          <b>false</b>"
-            + "          <i>false</i>"
-            + "          <u>false</u>"
-            + "        </font>"
-            + "      </even_cells>"
-            + "      <odd_cells align=\"left\" bgcolor=\"#cc3300\">"
-            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
-            + "          <b>false</b>"
-            + "          <i>false</i>"
-            + "          <u>false</u>"
-            + "        </font>"
-            + "      </odd_cells>"
-            + "      <stub_cell align=\"left\" bgcolor=\"#cc3300\">"
-            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
-            + "          <b>false</b>"
-            + "          <i>false</i>"
-            + "          <u>false</u>"
-            + "        </font>"
-            + "      </stub_cell>"
-            + "    </odd_rows>"
-            + "  </table>"
-            + "</financial_table_style>";
+    private String listStyle = null;
+//            = "<list_style>" 
+//            + "  <list text-align=\"justify\" list-style-type=\"disc\">"
+//            + "    <font size=\"16px\" family=\"Times New Roman\" color=\"#000000\">"
+//            + "      <b>false</b>"
+//            + "      <i>false</i>"
+//            + "      <u>false</u>"
+//            + "    </font>"
+//            + "  </list>"
+//            + "</list_style>";
+
+    private String tableStyle = null;
+//            = 
+//            "<financial_table_style>"
+//            + "  <global_styles>"
+//            + "    <currency_column width=\"2\" align=\"Right\">true</currency_column>"
+//            + "    <gutter_column width=\"2\" align=\"Left\">true</gutter_column>"
+//            + "    <remove_empty_column>true</remove_empty_column>"
+//            + "    <remove_empty_row>true</remove_empty_row>"
+//            + "    <stub_column minWidth=\"40\"/>"
+//            + "    <value_columns apply=\"true\">"
+//            + "      <width_rule name=\"min_rule\">"
+//            + "        <min_columns>-1</min_columns>"
+//            + "        <max_columns>10</max_columns>"
+//            + "        <width>10</width>"
+//            + "      </width_rule>"
+//            + "      <width_rule name=\"max_rule\">"
+//            + "        <min_columns>5</min_columns>"
+//            + "        <max_columns>-1</max_columns>"
+//            + "        <width>8</width>"
+//            + "      </width_rule>"
+//            + "    </value_columns>"
+//            + "  </global_styles>"
+//            + "  <table>"
+//            + "    <applyRule/>"
+//            + "    <even_rows>"
+//            + "      <even_cells align=\"left\" bgcolor=\"#ffffff\">"
+//            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+//            + "          <b>false</b>"
+//            + "          <i>false</i>"
+//            + "          <u>false</u>"
+//            + "        </font>"
+//            + "      </even_cells>"
+//            + "      <odd_cells align=\"left\" bgcolor=\"#ffffff\">"
+//            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+//            + "          <b>false</b>"
+//            + "          <i>false</i>"
+//            + "          <u>false</u>"
+//            + "        </font>"
+//            + "      </odd_cells>"
+//            + "      <stub_cell align=\"left\" bgcolor=\"#ffffff\">"
+//            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+//            + "          <b>false</b>"
+//            + "          <i>false</i>"
+//            + "          <u>false</u>"
+//            + "        </font>"
+//            + "      </stub_cell>"
+//            + "    </even_rows>"
+//            + "    <header_row>"
+//            + "      <even_cells align=\"left\" bgcolor=\"#ffffff\">"
+//            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+//            + "          <b>false</b>"
+//            + "          <i>false</i>"
+//            + "          <u>false</u>"
+//            + "        </font>"
+//            + "      </even_cells>"
+//            + "      <odd_cells align=\"left\" bgcolor=\"#ffffff\">"
+//            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+//            + "          <b>false</b>"
+//            + "          <i>false</i>"
+//            + "          <u>false</u>"
+//            + "        </font>"
+//            + "      </odd_cells>"
+//            + "      <stub_cell align=\"left\" bgcolor=\"#ffffff\">"
+//            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+//            + "          <b>false</b>"
+//            + "          <i>false</i>"
+//            + "          <u>false</u>"
+//            + "        </font>"
+//            + "      </stub_cell>"
+//            + "    </header_row>"
+//            + "    <odd_rows>"
+//            + "      <even_cells align=\"left\" bgcolor=\"#cc3300\">"
+//            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+//            + "          <b>false</b>"
+//            + "          <i>false</i>"
+//            + "          <u>false</u>"
+//            + "        </font>"
+//            + "      </even_cells>"
+//            + "      <odd_cells align=\"left\" bgcolor=\"#cc3300\">"
+//            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+//            + "          <b>false</b>"
+//            + "          <i>false</i>"
+//            + "          <u>false</u>"
+//            + "        </font>"
+//            + "      </odd_cells>"
+//            + "      <stub_cell align=\"left\" bgcolor=\"#cc3300\">"
+//            + "        <font size=\"10px\" family=\"Times New Roman\" color=\"\">"
+//            + "          <b>false</b>"
+//            + "          <i>false</i>"
+//            + "          <u>false</u>"
+//            + "        </font>"
+//            + "      </stub_cell>"
+//            + "    </odd_rows>"
+//            + "  </table>"
+//            + "</financial_table_style>";
 
     private String xmlStyleTemplateContent = null;
-    private final String styleTemplateID = "1";   
+    private final String styleTemplateID = "1";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -173,14 +188,80 @@ public class ReadXML extends HttpServlet {
                 String fileId = (String) request.getParameter("fileId");
                 String projectId = (String) request.getParameter("projectId");
                 String xmlContent = (String) request.getParameter("xmlContent");
-                boolean useNewTemplateProcessor = true;
-//                useNewTemplateProcessor = (String) request.getParameter("isNewsFile")!=null;
+                tableStyle = (String) request.getParameter("defaultTableTemplateContent");
+                paragraphStyle = (String) request.getParameter("defaultParagraphTemplateContent");
+                listStyle = (String) request.getParameter("defaultListTemplateContent");
+                imageStyle = (String) request.getParameter("defaultGraphicTemplateContent");
 
+//                boolean useNewTemplateProcessor = true;
+//                useNewTemplateProcessor = (String) request.getParameter("isNewsFile")!=null;
                 File file = new File("D:/xml before parse.xml");
+                File templates = new File("D:/templates.xml");
                 BufferedWriter output = new BufferedWriter(new FileWriter(file));
                 output.write(xmlContent);
                 output.close();
+                BufferedWriter output1 = new BufferedWriter(new FileWriter(templates));
+                output1.write(paragraphStyle + "\n" + tableStyle + "\n" + listStyle + "\n" + imageStyle);
+                output1.close();
 
+                //<editor-fold defaultstate="collapsed" desc="comment">
+//// Works on 12-03-2014
+//                String userId = (String) request.getParameter("userId");
+//                String templateId = (String) request.getParameter("templateId");
+//                String imgTemplatefileDirectory = "C://xpress_filer_docs//template-list//graphic//u"+userId+"_t"+templateId+".xml";
+//                String paragraphTemplatefileDirectory = "C://xpress_filer_docs//template-list//paragraph//u"+userId+"_t"+templateId+".xml";
+//                String listTemplatefileDirectory = "C://xpress_filer_docs//template-list//list//u"+userId+"_t"+templateId+".xml";
+//                String tableTemplatefileDirectory = "C://xpress_filer_docs//template-list//table//u"+userId+"_t"+templateId+".xml";
+////                File imgTemplatefile = new File(imgTemplatefileDirectory);
+////                File paragraphTemplatefile = new File(paragraphTemplatefileDirectory);
+////                File listTemplatefile = new File(listTemplatefileDirectory);
+////                File tableTemplatefile = new File(tableTemplatefileDirectory);
+////                BufferedReader br = new BufferedReader(new FileReader(imgTemplatefileDirectory));
+//                BufferedReader br = null;
+//                for (int i = 0; i < 4; i++) {
+//                    String sCurrentLine;
+//                        switch(i){
+//                            case 1:
+//                                try {
+//                                br = new BufferedReader(new FileReader(imgTemplatefileDirectory));
+//                                while ((sCurrentLine = br.readLine()) != null) {
+//                                    System.out.println(sCurrentLine);
+//                                }
+//                                }catch(Exception e){}
+//                                break;
+//                            case 2:
+//                                br = new BufferedReader(new FileReader(imgTemplatefileDirectory));
+//                                while ((sCurrentLine = br.readLine()) != null) {
+//                                    System.out.println(sCurrentLine);
+//                                }
+//                                break;
+//                            case 3:
+//                                br = new BufferedReader(new FileReader(imgTemplatefileDirectory));
+//                                while ((sCurrentLine = br.readLine()) != null) {
+//                                    System.out.println(sCurrentLine);
+//                                }
+//                                break;
+//                            case 4:
+//                                br = new BufferedReader(new FileReader(imgTemplatefileDirectory));
+//                                while ((sCurrentLine = br.readLine()) != null) {
+//                                    System.out.println(sCurrentLine);
+//                                }
+//                                break;
+//                        }
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    } finally {
+//                        try {
+//                            if (br != null) {
+//                                br.close();
+//                            }
+//                        } catch (IOException ex) {
+//                            ex.printStackTrace();
+//                        }
+//                    }
+//                }
+                //// Works on 12-03-2014
+//</editor-fold>
                 InputStream inputStream;
                 JAXBContext jaxbContext = JAXBContext.newInstance(Pages.class);
                 Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -218,19 +299,52 @@ public class ReadXML extends HttpServlet {
 
 //                                    System.out.println("Try");
                                     s = htmlFileGen.getHtmlContent(pageNumber, rec, r.getType());
-                                    if (useNewTemplateProcessor) {
-                                        System.out.println(r.getType()+" before template: "+s);
-                                        s = replacePTagByDiv(s);                                        
-                                        try {
-                                            String tempNewContent = applyTemplate(s, r.getType());
-                                            s = tempNewContent;
-                                        System.out.println(r.getType()+" after template: "+s);
-
-                                        } catch (Exception ex) {
-                                            System.out.println(ex.getMessage());
+//                                    s = replacePTagByDiv(s);
+                                    try {
+                                        String tempNewContent = null;
+                                        if (r.getType().equals("table") && (tableStyle != null && !"".equals(tableStyle))) {
+                                            tempNewContent = changeFontSize(s);
+                                        } else if ((r.getType().equals("paragraph") || r.getType().equals("text_with_line_break")) && paragraphStyle != null && !("".equals(paragraphStyle))) {
+                                            tempNewContent = applyTemplate(s, r.getType());
+                                            tempNewContent = tempNewContent.replaceAll("padding-left:0px;", "");
+                                        } else if ((r.getType().equals("image")) && (imageStyle != null && !"".equals(imageStyle))) {
+                                            tempNewContent = applyTemplate(s, r.getType());
+                                        } else if ((r.getType().equals("list")) && (listStyle != null && !"".equals(listStyle))) {
+                                            tempNewContent = applyTemplate(s, r.getType());
                                         }
+
+                                        if (tempNewContent != null) {
+                                            s = tempNewContent;
+                                        }
+                                        else if((r.getType().equals("paragraph") || r.getType().equals("text_with_line_break")))
+                                            s = s.replaceAll("padding-left:0px;", "");
+                                        
+//                                        System.out.println(r.getType()+" after template: "+s);
+                                    } catch (Exception ex) {
+                                        System.out.println(ex.getMessage());
                                     }
+//                                    //<editor-fold defaultstate="collapsed" desc="comment">
+                                    //if (useNewTemplateProcessor) {
+//                                        System.out.println(r.getType()+" before template: "+s);
+//                                        try {
+//                                            String tempNewContent;
+//                                            if("table".equals(r.getType()))
+//                                            {
+//                                                tempNewContent = changeFontSize(s);
+//                                            }
+//                                            else{
+//                                                tempNewContent = applyTemplate(s, r.getType());
+//                                            }
+//                                            s = tempNewContent;
+//
+//                                        System.out.println(r.getType()+" after template: "+s);
+//
+//                                        } catch (Exception ex) {
+//                                            System.out.println(ex.getMessage());
+//                                        }
+//                                    }
 //                                    System.out.println("Fail");
+//</editor-fold>
                                     s = StringEscapeUtils.escapeXml(s);
                                 } catch (Exception ex) {
                                     System.out.println("Exception occured in: ReadXML->processRequest:" + ex.getMessage());
@@ -288,10 +402,11 @@ public class ReadXML extends HttpServlet {
             String finalstring = sb.toString();
 
             // Create a xml file in D: drive
-            File file1 = new File("D:/xml after parse.xml");
-            BufferedWriter output1 = new BufferedWriter(new FileWriter(file1));
-            output1.write(StringEscapeUtils.unescapeXml(finalstring));
-            output1.close();
+            File fileAfterParse = new File("D:/xml after parse.xml");
+            BufferedWriter outputAfterParse = new BufferedWriter(new FileWriter(fileAfterParse));
+//            finalstring = StringEscapeUtils.unescapeXml(finalstring);
+            outputAfterParse.write(StringEscapeUtils.unescapeXml(finalstring));
+            outputAfterParse.close();
 
             //end of XML file creation
             return finalstring;
@@ -353,15 +468,16 @@ public class ReadXML extends HttpServlet {
     private String applyTemplate(String content, String type) throws IOException {
         String newContent = null;
         switch (type) {
-            case "table":
-                xmlStyleTemplateContent = tableStyle;
-                break;
             case "paragraph":
             case "text_with_line_break":
-                xmlStyleTemplateContent = pStyle;
+                xmlStyleTemplateContent = paragraphStyle;
+                break;
+            case "list":
+                xmlStyleTemplateContent = listStyle;
+                content = replacePTagByDiv(content);
                 break;
             case "image":
-                xmlStyleTemplateContent = iStyle;
+                xmlStyleTemplateContent = imageStyle;
                 break;
         }
 //        xmlStyleTemplateContent = "<all>".concat(pStyle).concat(iStyle).concat(tableStyle).concat("</all>");
@@ -373,15 +489,25 @@ public class ReadXML extends HttpServlet {
             newContent = hTMLTemplateProcessor.processedHTML();
             xmlUploadedFileStream.close();
             is.close();
-            
+
         } catch (UnsupportedEncodingException e) {
         }
         return newContent;
     }
 
-    private String replacePTagByDiv(String content){
+    private String replacePTagByDiv(String content) {
         String newCont = content.replace("<p", "<div").replace("</p>", "</div>");
-        return newCont;        
+        return newCont;
     }
 
+    private String changeFontSize(String content) {
+        String newContent, tempContent;
+        content = replacePTagByDiv(content);
+        tempContent = content.replaceAll("font-size:\\s[0-9]*[p][x][;]", "");
+        newContent = tempContent.replace("style=\"border", "style=\"font-size: 10pt; border");
+        tempContent = newContent.replaceFirst("margin-left:[-+]?[0-9]*[p][x][;]", "");
+        newContent = tempContent;
+//        System.out.println("Changed Font Size of table: "+newContent);
+        return newContent;
+    }
 }

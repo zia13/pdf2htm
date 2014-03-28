@@ -15,7 +15,7 @@
     </head>
     <body style=" background-color: darkkhaki">
         <div align ="center" style=" margin-top: 200px">
-            <form action="HomePage" method="post" enctype="multipart/form-data">
+            <form action="HomePage" method="post" enctype="multipart/form-data">            
                 <input type="hidden" name="documentURL" value="/5/1/8/2/7/146/"/>
                 <table border="2">
                     <tr><td><b><i>Project ID: </i></b></td><td><input type="text" name="projectId" value="1"/></td></tr>                

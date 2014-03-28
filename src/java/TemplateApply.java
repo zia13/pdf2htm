@@ -24,7 +24,7 @@ public class TemplateApply {
         String newContent = null;
         
         try {
-            InputStream is = new FileInputStream(new File("D://input.htm"));
+            InputStream is = new FileInputStream(new File("D://in.htm"));
             //InputStream is = new ByteArrayInputStream(new FileInputStream(f));
             InputStream xmlUploadedFileStream = new FileInputStream(new File("D://style1.xml"));
             if (true) {
