@@ -22,6 +22,9 @@ public class Page implements Comparable<Page> {
     
     @XmlElement(name="Region")
     private List<Region> regions;
+    
+    @XmlElement(name="Region")
+    public String hr;
         
     void setPageNumber(int i)
     {
@@ -42,7 +45,7 @@ public class Page implements Comparable<Page> {
     {
         return regions;
     }
-
+    
     public int compareTo(Page o) {
         Integer i = pageNumber;
         return i.compareTo(o.pageNumber);
